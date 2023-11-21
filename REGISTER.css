@@ -1,0 +1,25 @@
+section {
+    width: 100vw !important;
+    height: 100vh !important;
+}
+.inside-section {
+    width: 70% !important;
+    height: 80% !important;
+}
+
+.IMG{
+    background-image: url(./assets/IMG/REGISTER.jpeg);
+    background-position: center;
+    background-size: cover;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width:767px) {
+    .right,.IMG {
+        display: none !important;
+    }
+    .left {
+        width: 100%;
+    }
+}
