@@ -31,22 +31,23 @@ if (assert($_POST)) {
         <form action="" method="POST" class="my-5" >
               <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
                   <ion-icon name="person-circle-outline" class="fs-2 text-light" ></ion-icon>
-                  <input type="text" class="form-control w-75" id="form1" placeholder="USERNAME" name="USERNAME">
+                  <input type="text" required class="form-control w-75" id="form1" placeholder="USERNAME" name="USERNAME">
               </div>
               <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
                   <ion-icon name="person-circle-outline" class="fs-2 text-light" ></ion-icon>
-                  <input type="text" class="form-control w-75" id="form2" placeholder="LASTNAME" name="LASNAME">
+                  <input type="text" required class="form-control w-75" id="form2" placeholder="LASTNAME" name="LASNAME">
               </div>
               <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
               <ion-icon name="mail-outline" class="fs-2 text-light" ></ion-icon>
-                  <input type="text" class="form-control w-75" id="form3" placeholder="EMAIL" name="EMAIL">
+                  <input type="text" required class="form-control w-75" id="form3" placeholder="EMAIL" name="EMAIL">
               </div>
               <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
               <ion-icon name="qr-code-outline" class="fs-2 text-white"></ion-icon>
-                  <input type="text" class="form-control w-75" id="form3" placeholder="EMAIL" name="EMAIL">
+                  <input type="text" required class="form-control w-75" id="form3" placeholder="PASSWORD" name="PASSWORD">
               </div>  
-          <input type="submit" value="REGISTER" name="register">
+          <a href=""><input type="submit" value="REGISTER" name="register"></a>
         </form>
+        <a href="LOGIN.php">do you have an Account already?</a>
       </div>
 
 
