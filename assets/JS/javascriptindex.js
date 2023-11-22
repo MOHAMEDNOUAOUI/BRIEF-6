@@ -28,3 +28,13 @@ EMAIL.addEventListener("input", () => {
   validateInput(EMAIL, EMAILregex);
 });
 
+
+// document.querySelectorAll('form').forEach(function (ele) {
+//   ele.addEventListener("click" ,function (event) {
+//     event.preventDefault();
+//   })
+// })
+
+
+
+

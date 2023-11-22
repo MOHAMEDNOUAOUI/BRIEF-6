@@ -34,7 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultregister = mysqli_query($cnc, $QUERY);
 
     if ($resultregister) {
-      header("Location: checker.php?EMAIL=" .urlencode($email));
+      session_start();
+      $_SESSION['email_register'] = $email;
+      header("Location: checker.php");
       exit;
     } else {
       echo "ERROR" . $resultregister . "<br>";

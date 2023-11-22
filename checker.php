@@ -1,8 +1,10 @@
 <?php
 include_once('connectDB.php');
-
-$email = $_GET['EMAIL'];
-echo $email;
+session_start ();
+if(isset($_SESSION['email_register'])) {
+    $email = $_SESSION['email_register'];
+    echo $email;
+}
 
 //1 == ADMIN
 //2 == CLIENT
