@@ -15,16 +15,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $Loginquery->get_result();
 
     if ($result->num_rows === 0) {
-        $errorMsg = "EMAIL INCORRECT";
+        $errorMsg = "THERE IS NO SUCH ACCOUNT";
     } else {
         $userData = $result->fetch_assoc();
-        $hashedPasswordFromDB = $userData['PASSWORDuser']; 
-        if (password_verify($passwordLOGIN, $hashedPasswordFromDB)) {
-            
-            header("Location: dashboard.php");
-            exit();
+        if ($userData) {
+            $hashedPasswordFromDB = $userData['PASSWORDuser']; 
+            if (password_verify($passwordLOGIN, $hashedPasswordFromDB)) {
+                $errorMsg = "PASSWORD CORRECT";
+                  if ($userData["IDROLE"] == 1) {
+                    header("location: ADMIN.php");
+                    exit;
+                  }
+                  else
+                  {
+                    header("location: CLIENT.php");
+                    exit;
+                  }
+            } else {
+                // Password is incorrect
+                $errorMsg = "PASSWORD IS INCORRECT";
+            }
         } else {
-            $errorMsg = "PASSWORD INCORRECT";
+            $errorMsg = "THERE IS NO SUCH ACCOUNT";
         }
     }
 }
@@ -50,9 +62,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
   <!--THE ERROR MESSAGE-->
   <?php if ($errorMsg !== ""): ?>
-                <div class="CLOSED bg-danger text-light text-center w-50 d-flex my-4 px-4 py-2 align-items-center justify-content-between">
-                    <p class="py-0 my-0" onclick="close()"><?php echo $errorMsg; ?></p>
-                    <ion-icon name="close-circle-outline" class="fs-2 CLOSE" onclick="close()"></ion-icon>
+                <div class="CLOSED bg-danger text-light text-center w-50 d-flex my-4 px-4 py-2 align-items-center justify-content-center">
+                    <p class="py-0 my-0"><?php echo $errorMsg; ?></p>
                 </div>
             <?php endif; ?>
 
@@ -67,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="password" required class="form-control w-75" autocomplete="current-password" id="form4" placeholder="PASSWORD" name="PASSWORD">
             </div>
             <input type="submit" class="my-4 btn btn-success" value="LOGIN" name="LOGIN">
-            <a href="index.php" class="text-success">Register right here !!!</a>
+            <a href="index.php" class="">Register right here !!!</a>
         </form>
 
   </div>

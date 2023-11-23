@@ -2,14 +2,6 @@
 
 include_once('connectDB.php');
 
-if(isset($_POST['1']) || isset($_POST['2'])) {
-  $pick = isset($_POST['1']) ? 1 : 2;
-  
-  $check = $cnc->prepare("UPDATE users SET IDrole = '$pick' WHERE EMAILuser = '$email'");
-   $check->execute();
-      echo "Database updated successfully";
-}
-
 
 $name = "";
 $lastname = "";
@@ -85,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="email" required class="form-control w-75" id="form3" value="EMAIL" placeholder="EMAIL" name="EMAIL">
               </div>
               <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
-                <ion-icon name="qr-code-outline" class="fs-2 text-success"></ion-icon>
+                <ion-icon name="lock-closed-outline" class="fs-2 text-success"></ion-icon>
                 <input type="password" required class="form-control w-75" id="form4" placeholder="PASSWORD" name="PASSWORD">
               </div>
               <a href=""><input type="submit" class="btn btn-success" value="REGISTER" name="register"></a>       
