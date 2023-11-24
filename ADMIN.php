@@ -17,16 +17,30 @@ if (isset($_POST['ADDCATEGORY'])) {
     $resultcheck = $check->get_result();
 
     if ($resultcheck->num_rows > 0) {
-        $error = "SORRY BUT THE CATEGORY ALREADY EXIST";
+        $error = '<ion-icon name="sad-outline" style="font-size:12rem;"></ion-icon>
+        <h4>SORRY BUT THE CATEGORY ALREADY EXIST</h4>
+        <p>please go back to categories to add more if you liked</p>';
     } else {
         $cate = $cnc->prepare("INSERT INTO category (NAMEcategory) values (?);");
         $cate->bind_param('s', $CG);
         $cate->execute();
         $cate->close();
-        header("location: ADMIN.php");
-        exit;
+        $error = '<ion-icon name="happy-outline" style="font-size:12rem;"></ion-icon> 
+        <h4>CATEGORY ADDED SUCCEFULLY</h4>
+        <p>please go back to categories to add more if you liked</p>';
     }
 }
+
+if(isset($_POST['MODIFYCATEGORY'])){
+    $inputvalue = $_POST['MODIFYCATEGORY'];//INPUT VALUE;
+    $buttonID = $_POST['IDCATEGORY']; // i want the inside of this //THE ID OF THE CATEGORY;       
+
+    $CATEGORY_MODIFY = $cnc->prepare("UPDATE category SET NAMEcategory = ? WHERE IDcategory = ?");
+    $CATEGORY_MODIFY->bind_param("si",$inputvalue,$buttonID);
+    $CATEGORY_MODIFY->execute();
+    $error = "<h4>CATEGORY MODIFIED SUCCEFULY</h4>";
+}   
+
 ?>
 
 
@@ -50,7 +64,7 @@ if (isset($_POST['ADDCATEGORY'])) {
 
 
     <div class="HERO d-flex" style="width:100vw;height:100vh">
-        <div class="LEFT bg-gradient bg-success w-25 h-100">
+        <div class="LEFT  top-0 bottom-0 bg-gradient bg-success w-25 h-100">
             <h1 class="ps-2 py-4 text-light text-center border-bottom border-light border-2">DASHBOARD</h1>
             <div class="h-75 w-100">
                 <form action="" method="POST" class="row align-items-center justify-content-evenly h-100">
@@ -88,69 +102,152 @@ if (isset($_POST['ADDCATEGORY'])) {
         <!--MAINN PLACE -->
         <div class="RIGHT w-75 h-100 position-relative">
 
-            <h4 class="position-absolute" style="top: 50%;
+            <div class="position-absolute d-flex text-center align-items-center flex-column" style="top: 50%;
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);">
                 <?php echo $error;
-    ?>
-                </h1>
-                <?php
-
-                // echo $email;
-                if ($_SERVER["REQUEST_METHOD"] == 'POST') {
-                    foreach ($_POST as $key => $value) {
-                        if ($key == 'Products') {
-                            echo "Products here";
-                        } else if ($key == 'Categories') {
                 ?>
 
-                            <div class="mt-5 top w-100 d-flex justify-content-between px-5 align-items-center" id="test">
-                                <div class="">
-                                    <h4>Add New Category</h4>
-                                    <p class="">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-                                </div>
-                                <!-- Button trigger modal -->
-                                <ion-icon name="add-circle-outline" class="fs-1" data-bs-toggle="modal" data-bs-target="#exampleModal"></ion-icon>
+            </div>
+            <?php
+
+            // echo $email;
+            if ($_SERVER["REQUEST_METHOD"] == 'POST') {
+                foreach ($_POST as $key => $value) {
+                    if ($key == 'Products') {
+                        echo "Products here";
+                    } else if ($key == 'Categories') {
+            ?>
+
+                        <div class="CATE mt-5 top w-100 d-flex justify-content-between px-5 align-items-center" id="test">
+                            <div class="">
+                                <h4>Add New Category</h4>
+                                <p class="">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
                             </div>
+                            <!-- Button trigger modal -->
+                            <ion-icon name="add-circle-outline" class="fs-1" data-bs-toggle="modal" data-bs-target="#exampleModal"></ion-icon>
+                        </div>
 
 
-                            <!-- Modal -->
-                            <div class="modal fade bg-gradient bg-success align-items-center" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog h-75 d-flex align-items-center">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="" method="POST">
-                                                <label for="">CATEGORY NAME</label><br>
-                                                <input required type="text" name="ADDCATEGORY" id="ADDCATEGORY">
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" name="submitcategory" value="ADDCATEGORY" class="btn btn-success">Submit</button>
-                                                </div>
-                                            </form>
-                                        </div>
-
+                        <!-- Modal -->
+                        <div class="modal fade bg-gradient bg-success align-items-center" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog h-75 d-flex align-items-center">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Category</h1>
                                     </div>
+                                    <div class="modal-body">
+                                        <form action="" method="POST">
+                                            <label for="">CATEGORY NAME</label><br>
+                                            <input required type="text" name="ADDCATEGORY" id="ADDCATEGORY">
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" name="submitcategory" value="ADDCATEGORY" class="btn btn-success">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
                                 </div>
                             </div>
+                        </div>
 
 
 
-                        <?php
-                        } else if ($key == 'Users') {
-                            echo "Users here";
-                        } else if ($key == 'Profile') {
-                            echo "Profile here";
-                        } else {
-                        }
-                    }
-                } else {
-                    echo $CG;
-                    function DASHBOARD($cnc, $email)
-                    {
+                        <div class="bottom w-100 table-responsive">
+                            <h1 class="text-center">CATEGORIES</h1>
+                            <table class="table table-success w-75 mx-auto">
+
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">CATEGORY NAME</th>
+                                        <th scope="col">PLANTS</th>
+                                        <th scope="col">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <?php
+                                    $pr = $cnc->prepare("SELECT * FROM category");
+                                    $pr->execute();
+                                    $result = $pr->get_result();
+
+                                    while ($row = $result->fetch_assoc()) {
+                                        $id = $row["IDcategory"];
+                                    ?>
+                                        <tr>
+                                            <th scope="row"><?php echo $row['IDcategory'] ?></th>
+                                            <td><?php echo $row['NAMEcategory'] ?></td>
+                                            <td>
+
+                                                <?php
+                                                $ps = $cnc->prepare("SELECT * FROM products WHERE IDcategory = $id");
+                                                $ps->execute();
+                                                $resultP = $ps->get_result();
+                                                $count = $resultP->num_rows;
+                                                echo $count;
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <form action="" method="POST">
+                                                
+                                                    <button class="btn btn-danger" name="DELETE">DELETE</button>
+                                                </form>
+                                                <button class="btn btn-primary" name="MODIFY" data-bs-toggle="modal" data-bs-target="#TEST<?php echo $id?>">MODIFY</button>
+
+
+
+                                            </td>
+                                        </tr>
+
+
+                                        <div class="modal fade" id="TEST<?php echo $row['IDcategory']?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header mx-auto text-center d-flex justify-content-center flex-column">
+                                                        <h1 class="modal-title" id="exampleModalLabel" style="font-size=10rem"><?php echo $row["NAMEcategory"]?></h1>
+                                                        <h4>ID:<?php echo $row["IDcategory"] ?></h1>
+                                                    </div>
+                                                    <form action="" method="POST">
+                                                    <div class="modal-body">
+                                                    
+                                                        <label for="">NEW NAME</label><br>
+                                                        <input type="text" name="MODIFYCATEGORY" placeholder="newname">
+                                                        <input type="text" name="IDCATEGORY" value="<?php echo $row["IDcategory"]?>" placeholder="newname" style="display:none">
+                                                        
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary" value="" name="">Save changes</button>
+                                                    </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    <?php
+                                    }
+                                    
+                                        
+                                    ?>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
+
+
+
+                    <?php
+                    } else if ($key == 'Users') {
+                        echo "Users here";
+                    } else if ($key == 'Profile') {
+                        echo "Profile here";
+                    } else if ($key == 'Dashboard') {
                         $PRODUCTS = $cnc->prepare("SELECT * FROM products");
                         $CATEGORIES = $cnc->prepare("SELECT * FROM category");
                         $USERS = $cnc->prepare("SELECT * FROM users");
@@ -167,7 +264,9 @@ if (isset($_POST['ADDCATEGORY'])) {
 
                         $user = mysqli_query($cnc, $qr);
                         $result = mysqli_fetch_assoc($user);
-                        ?>
+                    ?>
+
+                        </h1>
                         <h4 class="mx-5 mt-5">Nice To Have You Back MR,<?php echo $result["NAMEuser"] . ' ' . $result["LASTNAMEuser"]; ?> &#128515;</h4>
 
                         <div class="STATISTIQUE text-light col-md-12 d-flex justify-content-evenly my-3">
@@ -224,11 +323,93 @@ if (isset($_POST['ADDCATEGORY'])) {
                             </div>
                         </div>
 
-                <?php
+                    <?php
                     }
-                    DASHBOARD($cnc, $email);
                 }
-                ?>
+            } else {
+                echo $CG;
+                function DASHBOARD($cnc, $email, $error)
+                {
+                    $PRODUCTS = $cnc->prepare("SELECT * FROM products");
+                    $CATEGORIES = $cnc->prepare("SELECT * FROM category");
+                    $USERS = $cnc->prepare("SELECT * FROM users");
+                    $qr = "SELECT NAMEuser,LASTNAMEuser FROM users WHERE EMAILuser = '$email'";
+
+                    //returning CLIENTS
+                    $QC = "SELECT * FROM users WHERE IDrole = 2";
+                    $RC = mysqli_query($cnc, $QC);
+                    $CC = mysqli_num_rows($RC);
+                    ///RETURNING AMINDS
+                    $QA = "SELECT * FROM users WHERE IDrole = 1";
+                    $RA = mysqli_query($cnc, $QA);
+                    $CA = mysqli_num_rows($RA);
+
+                    $user = mysqli_query($cnc, $qr);
+                    $result = mysqli_fetch_assoc($user);
+                    ?>
+
+                    </h1>
+                    <h4 class="mx-5 mt-5">Nice To Have You Back MR,<?php echo $result["NAMEuser"] . ' ' . $result["LASTNAMEuser"]; ?> &#128515;</h4>
+
+                    <div class="STATISTIQUE text-light col-md-12 d-flex justify-content-evenly my-3">
+                        <div class="px-2 py-2 PRODUCTS STATS col-md-3 rounded-4" style="background: linear-gradient(to top, #0ba360 0%, #3cba92 100%);box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;height:12rem">
+                            <h4 class="fs-5">Products</h4>
+                            <div class="mt-3 d-flex align-items-center justify-content-around">
+                                <ion-icon name="leaf-outline" class="text-light " style="font-size: 5rem;"></ion-icon>
+                                <?php
+                                $PRODUCTS->execute();
+                                $result = $PRODUCTS->get_result();
+                                ?>
+                                <h4><?php echo $result->num_rows; ?></h4>
+                                <?php
+                                ?>
+                            </div>
+                        </div>
+                        <div class="px-2 py-2 PRODUCTS STATS col-md-3 rounded-4" style="background: linear-gradient(to top, #0ba360 0%, #3cba92 100%);box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;height:12rem">
+                            <h4 class="fs-5">CATEGORIES</h4>
+                            <div class="mt-3 d-flex align-items-center justify-content-around">
+                                <ion-icon name="albums-outline" class="" style="font-size: 5rem;"></ion-icon>
+                                <?php
+                                $CATEGORIES->execute();
+                                $result = $CATEGORIES->get_result();
+                                ?>
+                                <h4><?php echo $result->num_rows; ?></h4>
+                                <?php
+                                ?>
+                            </div>
+                        </div>
+                        <div class="px-2 py-2 PRODUCTS STATS col-md-4 rounded-4" style="background: linear-gradient(to top, #0ba360 0%, #3cba92 100%);box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+                            <h4 class="fs-5">USERS</h4>
+                            <div class="mt-3 d-flex align-items-center flex-column">
+                                <div class="d-flex align-items-center justify-content-around w-100">
+                                    <ion-icon name="people-outline" class="" style="font-size: 5rem;"></ion-icon>
+                                    <?php
+                                    $USERS->execute();
+                                    $result = $USERS->get_result();
+                                    ?>
+                                    <h4><?php echo $result->num_rows; ?></h4>
+                                </div>
+                                <div class="w-100 ">
+                                    <div class="d-flex justify-content-evenly w-100">
+                                        <p class="fs-4 fw-bold">CLIENTS</p>
+                                        <h4><?php echo $CC ?></h4>
+                                    </div>
+                                    <div class="d-flex justify-content-evenly w-100">
+                                        <p class="fs-4 fw-bold">ADMINS&nbsp;</p>
+                                        <h4><?php echo $CA ?></h4>
+                                    </div>
+                                </div>
+                                <?php
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+
+            <?php
+                }
+                DASHBOARD($cnc, $email, $error);
+            }
+            ?>
         </div>
     </div>
 
