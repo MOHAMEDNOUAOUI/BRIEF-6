@@ -1,8 +1,11 @@
 <?php
 include_once('connectDB.php');
 session_start();
-if (isset($_SESSION['email_register'])) {
-    $email = $_SESSION['email_register'];
+if($_SESSION['IDROLE'] != 1) {
+        header("location: LOGIN.php");
+}
+if (isset($_SESSION['emaillogin'])) {
+    $email = $_SESSION['emaillogin'];
 }
 
 $CG = "";
@@ -31,6 +34,9 @@ if (isset($_POST['ADDCATEGORY'])) {
     }
 }
 
+
+//modify
+
 if(isset($_POST['MODIFYCATEGORY'])){
     $inputvalue = $_POST['MODIFYCATEGORY'];//INPUT VALUE;
     $buttonID = $_POST['IDCATEGORY']; // i want the inside of this //THE ID OF THE CATEGORY;       
@@ -39,7 +45,74 @@ if(isset($_POST['MODIFYCATEGORY'])){
     $CATEGORY_MODIFY->bind_param("si",$inputvalue,$buttonID);
     $CATEGORY_MODIFY->execute();
     $error = "<h4>CATEGORY MODIFIED SUCCEFULY</h4>";
-}   
+}
+
+if(isset($_POST['MODIFYPRODUCT'])) {
+    $id_produit = $_POST['PRODUCTIDHIDDEN'];
+    $NEWNAMEPRODUCT = $_POST['NEWNAMEPRODUCTS'];
+    $NEWPRICE = $_POST['NEWPRICEPRODUCTS'];
+    $NEWQUANTITY = $_POST['NEWQUANTITYPRODUCTS'];
+    $NEWIMAGE = $_POST['NEWIMAGEPRODUCTS'];
+
+
+    $updateproduct = $cnc->prepare("UPDATE products SET NAMEproduct = ?,price_product = ?, quantity_product = ?,image_product = ? WHERE IDproduct = ?");
+    $updateproduct->bind_param("siisi",$NEWNAMEPRODUCT,$NEWPRICE,$NEWQUANTITY,$NEWIMAGE,$id_produit);
+    $updateproduct->execute();
+    $error = "<h4>PRODUCT UPDATED SUCCEFULLY</h4>";
+
+}
+
+
+
+
+//deleting 
+
+if(isset($_POST['DELETECATEGORY'])) {
+    $is_delete = $_POST["DELETECATEGORY"];
+
+    $delete = $cnc->prepare("DELETE FROM category WHERE IDcategory = ?");
+    $delete->bind_param("i",$is_delete);
+    $delete->execute();
+    $error = "<h4>CATEGORY DELETED SUCCEFULLY</h4>
+    <p>please go back to Categories to delete more if you want</p>";
+}
+
+
+if(isset($_POST['DELETEPRODUCT'])) {
+    $is_deleteproduct = $_POST['DELETEPRODUCT'];
+    $deleteproduct = $cnc->prepare("DELETE FROM products WHERE IDproduct = ?");
+    $deleteproduct->bind_param("i",$is_deleteproduct);
+    $deleteproduct->execute();
+    $error = "<h4>PRODUCTS HAVE BEEN DELETED SUCCEFULLY</h4>
+    <p>please go back to Categories to delete more if you want</p>";
+}
+
+
+
+//END DELETING
+
+if(isset($_POST['submitproduct'])) {
+    $nameproduct = $_POST['NAMEPRODUCTS'];
+    $priceproduct = $_POST['PRICEPRODUCTS'];
+    $quantity = $_POST['QUANTITYPRODUCTS'];
+    $imageproduct = $_POST['IMAGEPRODUCTS'];
+    $category = $_POST['categorySelect'];
+
+    $checkproduct = $cnc->prepare("SELECT NAMEproduct FROM products WHERE NAMEproduct = ?");
+    $checkproduct->bind_param('s',$nameproduct);
+    $checkproduct->execute();
+    $result = $checkproduct->get_result();
+    if($result->num_rows > 0) {
+        $error = "<h4>SORRY PRODUCT ALREADY EXIST</h4>";
+    } 
+    else {
+        $addproduct = $cnc->prepare("INSERT INTO products (NAMEproduct,price_product,quantity_product,image_product,IDCATEGORY)values (?,?,?,?,?);");
+        $addproduct->bind_param("siisi",$nameproduct,$priceproduct,$quantity,$imageproduct,$category);
+        $addproduct->execute();
+        $error = "<h4>PRODUCT ADDED SUCCEFULLY</h4>";
+    }
+    
+}
 
 ?>
 
@@ -116,8 +189,205 @@ if(isset($_POST['MODIFYCATEGORY'])){
             if ($_SERVER["REQUEST_METHOD"] == 'POST') {
                 foreach ($_POST as $key => $value) {
                     if ($key == 'Products') {
-                        echo "Products here";
-                    } else if ($key == 'Categories') {
+
+                        ?>
+
+                        <div class="CATE mt-5 top w-100 d-flex justify-content-between px-5 align-items-center" id="test">
+                            <div class="">
+                                <h4>Add New Product</h4>
+                                <p class="">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
+                            </div>
+
+                            <!-- Button trigger modal PRODUCT -->
+                            <ion-icon name="add-circle-outline" class="fs-1" data-bs-toggle="modal" data-bs-target="#addproducts"></ion-icon>
+                        </div>
+
+                        
+                         <!-- Modal add PRODUCT -->
+                         <div class="modal fade bg-gradient bg-success align-items-center" id="addproducts" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog h-75 d-flex align-items-center">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Product</h1>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="" method="POST" class="d-flex flex-column">
+                                            <label for="">PRODUCT NAME</label><br>
+                                            <input required type="text" name="NAMEPRODUCTS" id="NAMEPRODUCTS">
+                                            <label for="">PRICE</label>
+                                            <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-dark text-light">DH</span>
+                                                    <span class="input-group-text bg-dark text-light">0.00</span>
+                                                <input required class="form-control" type="text" name="PRICEPRODUCTS" id="PRICEPRODUCTS" class="w-25">
+                                            </div>
+                                            
+
+                                            <label for="">QUANTITY</label>
+
+                                            <input required type="number" name="QUANTITYPRODUCTS" id="QUANTITYPRODUCTS" class="w-25" >
+
+                                            
+                                                    <label for="">UPLOAD AN IMAGE</label>
+                                                     <div class="input-group mb-3">
+                                                    <input required type="file" class="form-control" name="IMAGEPRODUCTS" id="IMAGEPRODUCTS" class="w-25">
+                                                    </div>
+
+
+                                                    <label for="">Choose Category</label>
+
+                                                    <select name="categorySelect" class="w-50 py-2 bg-dark text-light" id="" required>
+                                                    
+                                                        <option value="">Nothing</option>
+                                                    <?php
+                                                    $CAT = $cnc->prepare("SELECT IDcategory,NAMEcategory FROM category");
+                                                        $CAT->execute();
+                                                        $rr = $CAT->get_result();
+                                                        while($row = $rr->fetch_assoc()) {
+                                                            ?>
+
+                                                            <option value="<?php echo $row ['IDcategory']?>"><?php echo $row['NAMEcategory']?></option>
+
+                                                            <?php
+                                                        }
+                                                        ?>
+                                                    </select>
+
+
+                                            <div class="modal-footer mt-4">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" name="submitproduct" value="ADDCATEGORY" class="btn btn-success">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+                        <table class="table table-dark">
+                            <h1 class="text-center mt-3">PRODUCTS</h1>
+                        <thead>
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">IMAGE</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">QUantity</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <?php
+                            $pr = $cnc->prepare("SELECT * FROM products");
+                            $pr->execute();
+                            $result = $pr->get_result();
+                            while($row = $result->fetch_assoc()) {
+                                $id_product = $row['IDproduct'];
+                                $nameproduct = $row['NAMEproduct'];
+                                $price = $row ['price_product'];
+                                $quantity = $row ['quantity_product'];
+                                $image = $row['image_product'];
+                                $category = $row['IDCATEGORY'];
+                                ?>
+                                <tr>
+                            <th scope="row"><?php echo $row['IDproduct']?></th>
+                            <td><img src="./assets/IMG/<?php echo $row['image_product']?>" alt="" style="width=5rem;height:5rem"></td>
+                            <td><?php echo $row['NAMEproduct']?></td>
+                            <td><?php echo $row['price_product']?></td>
+                            <td><?php echo $row['quantity_product']?></td>
+                            <td><?php 
+                            $category_product = $cnc->prepare("SELECT NAMEcategory FROM category WHERE IDcategory = ?");
+                            $category_product->bind_param("i",$row['IDCATEGORY']);
+                            $category_product->execute();
+                            $resultproduct =$category_product->get_result();
+                            $row = $resultproduct->fetch_assoc();
+                            echo $row['NAMEcategory'];
+                            
+                            ?></td>
+                            <td class="" >
+                            <button class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#MODIFYPRODUCT_<?php echo $id_product; ?>">MODIFY</button>
+                            <form action="" method="POST">
+                            <button type="submit" name="DELETEPRODUCT" class="btn btn-danger" value="<?php echo $id_product?>">DELETE</button>
+
+                            </form>
+                            
+                                </td>
+                            </tr>
+
+                                          <!-- Modal MODIFY PRODUCT -->
+                <div class="modal fade" id="MODIFYPRODUCT_<?php echo $id_product; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">MODIFY PRODUCT</h5>
+                    </div>
+                    <div class="modal-body d-flex flex-column">
+                        <form action="" method="POST" class=""> 
+                        <label for="">NEW PRODUCT NAME</label><br>
+                        <input required type="text" value="<?php echo $nameproduct ?>"  name="NEWNAMEPRODUCTS" id="NEWNAMEPRODUCTS">
+                    
+                        <label for="">NEW PRICE</label>
+                                            <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-dark text-light">DH</span>
+                                                    <span class="input-group-text bg-dark text-light">0.00</span>
+                                                <input required class="form-control" type="text" value="<?php echo $price?>" name="NEWPRICEPRODUCTS" id="NEWPRICEPRODUCTS" class="w-25">
+                                            </div>
+
+                                            <label for="">QUANTITY</label>
+
+                                            <input required type="number" value="<?php echo $quantity?>" name="NEWQUANTITYPRODUCTS" id="NEWQUANTITYPRODUCTS" class="w-25" >
+
+                                            <label for="">UPLOAD AN IMAGE</label>
+                                                     <div class="input-group mb-3">
+                                                    <input required type="file" class="form-control" name="NEWIMAGEPRODUCTS" id="NEWIMAGEPRODUCTS" class="w-25">
+                                                    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="text" name="PRODUCTIDHIDDEN" value="<?php echo $id_product?>" style="display:none">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="MODIFYPRODUCT" class="btn btn-primary">Save changes</button>
+                    </div>
+                         </form>
+                    </div>
+                </div>
+                </div>
+
+
+                
+
+
+
+
+
+
+                                <?php
+                            }
+                            ?>
+                            
+                            
+                        </tbody>
+                        </table>
+
+
+                  
+
+
+                        
+
+
+
+
+
+                        <?php
+                    
+                    } 
+                    
+                    
+                    else if ($key == 'Categories') {
             ?>
 
                         <div class="CATE mt-5 top w-100 d-flex justify-content-between px-5 align-items-center" id="test">
@@ -130,7 +400,7 @@ if(isset($_POST['MODIFYCATEGORY'])){
                         </div>
 
 
-                        <!-- Modal -->
+                        <!-- Modal add category -->
                         <div class="modal fade bg-gradient bg-success align-items-center" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog h-75 d-flex align-items-center">
                                 <div class="modal-content">
@@ -155,8 +425,8 @@ if(isset($_POST['MODIFYCATEGORY'])){
 
 
                         <div class="bottom w-100 table-responsive">
-                            <h1 class="text-center">CATEGORIES</h1>
-                            <table class="table table-success w-75 mx-auto">
+                            <h1 class="text-center mt-3">CATEGORIES</h1>
+                            <table class="table table-dark">
 
                                 <thead>
                                     <tr>
@@ -189,18 +459,21 @@ if(isset($_POST['MODIFYCATEGORY'])){
                                                 echo $count;
                                                 ?>
                                             </td>
-                                            <td>
-                                                <form action="" method="POST">
-                                                
-                                                    <button class="btn btn-danger" name="DELETE">DELETE</button>
-                                                </form>
-                                                <button class="btn btn-primary" name="MODIFY" data-bs-toggle="modal" data-bs-target="#TEST<?php echo $id?>">MODIFY</button>
+                                            <td class="d-flex gap-3">
+                                            <button class="btn btn-success" name="MODIFY" data-bs-toggle="modal" data-bs-target="#TEST<?php echo $id?>">MODIFY</button>
 
+                                                <form action="" method="POST">
+                                                    
+                                                    <button class="btn btn-danger" type="submit" value="<?php echo $id?>" name="DELETECATEGORY">DELETE</button>
+                                                </form>
+                                               
 
 
                                             </td>
                                         </tr>
 
+
+                                        <!-- modify category-->
 
                                         <div class="modal fade" id="TEST<?php echo $row['IDcategory']?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -244,9 +517,70 @@ if(isset($_POST['MODIFYCATEGORY'])){
 
                     <?php
                     } else if ($key == 'Users') {
-                        echo "Users here";
+                        ?>
+                        <h1 class="text-center my-5">ALL USERS INFORMATION</h1>
+                        <table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">FirstName</th>
+      <th scope="col">LastName</th>
+      <th scope="col">EMAIL</th>
+      <th scope="col">ROLE</th>
+    </tr>
+  </thead>
+  <tbody>
+
+   <?php
+   $users = $cnc->prepare("SELECT * FROM users");
+   $users->execute();
+   $usersresult = $users->get_result();
+   while($rowuser = $usersresult->fetch_assoc()) {
+    ?>
+     <tr>
+      <th scope="row"><?php echo $rowuser ['IDuser']?></th>
+      <td><?php echo $rowuser ['NAMEuser']?></td>
+      <td><?php echo $rowuser ['LASTNAMEuser']?></td>
+      <td><?php echo $rowuser ['EMAILuser']?></td>
+      <?php
+        if($rowuser['IDROLE'] == 1) {
+            ?>
+            <td>ADMIN</td>
+            <?php
+        }
+        else {
+            ?>
+            <td>CLIENT</td>
+            <?php
+        }
+      
+      ?>
+    </tr>
+    <?php
+   }
+   
+   ?>
+    
+  </tbody>
+</table>
+                        <?php
                     } else if ($key == 'Profile') {
-                        echo "Profile here";
+                        $PROFILE = $cnc->prepare("SELECT * FROM users WHERE EMAILuser = ?");
+                        $PROFILE->bind_param("s",$email);
+                        $PROFILE->execute();
+                        $PROFILEresult = $PROFILE->get_result();
+                        $row=$PROFILEresult->fetch_assoc();
+                        ?>
+                        <div class="card d-flex align-items-center justify-content-center" style=" position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);">
+                        <ion-icon name="person-circle-outline" style="font-size:10rem"></ion-icon>
+                        <h4><?php echo $row['NAMEuser']. ' ' . $row['LASTNAMEuser']?></h4>
+                        <p><?php echo $email?></p>
+                        <p>ROLE : ADMIN</p>
+                        </div>
+                        <?php
                     } else if ($key == 'Dashboard') {
                         $PRODUCTS = $cnc->prepare("SELECT * FROM products");
                         $CATEGORIES = $cnc->prepare("SELECT * FROM category");

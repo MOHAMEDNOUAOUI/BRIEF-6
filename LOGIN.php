@@ -8,6 +8,7 @@ $errorMsg = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $emailLOGIN = $_POST["EMAIL"];
     $passwordLOGIN = $_POST["PASSWORD"];
+    
 
     $Loginquery = $cnc->prepare("SELECT * FROM users WHERE EMAILuser = ?");
     $Loginquery->bind_param("s", $emailLOGIN);
@@ -22,12 +23,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $hashedPasswordFromDB = $userData['PASSWORDuser']; 
             if (password_verify($passwordLOGIN, $hashedPasswordFromDB)) {
                 $errorMsg = "PASSWORD CORRECT";
+                
                   if ($userData["IDROLE"] == 1) {
+                session_start();
+                $_SESSION['emaillogin'] = $emailLOGIN;
+                $_SESSION['IDROLE'] = 1;
                     header("location: ADMIN.php");
                     exit;
                   }
                   else
                   {
+                    session_start();
+                    $_SESSION['emaillogin'] = $emailLOGIN;
+                    $_SESSION['IDROLE'] = 2;
                     header("location: CLIENT.php");
                     exit;
                   }
