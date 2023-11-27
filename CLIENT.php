@@ -170,7 +170,8 @@ if(isset($_POST['ADDTOCART'])) {
 
             <?php
         }
-    } elseif (isset($_GET['FILTER'])) {
+    } 
+    elseif (isset($_GET['FILTER'])) {
         $checkFILTER = $_GET['FILTER'];
         if($_GET['FILTER'] === 'ALL') {
             $query = "SELECT * FROM products";
@@ -188,6 +189,26 @@ if(isset($_POST['ADDTOCART'])) {
         while($row = $result->fetch_assoc()) {
             ?>
            <div class="card col-md-3 px-0 mx-0 d-flex flex-column align-items-center my-3">
+    <div class="d-flex flex-column align-items-center h-100">
+        <img src="./assets/IMG/<?php echo $row['image_product']?>" class="w-75 h-75" alt="">
+        <div class="text-center">
+            <h4><?php echo $row['NAMEproduct']?></h4>
+            <form action="" method="POST">
+                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" class="btn btn-success">Add to cart</button>
+            </form>
+        </div>
+    </div>
+</div>
+            <?php
+        }
+    }
+    elseif(!isset($_GET['FILTER'])) {
+        $query = $cnc->prepare("SELECT * FROM products");
+        $query->execute();
+        $r = $query->get_result();
+        while($row = $r->fetch_assoc()) {
+            ?>
+             <div class="card col-md-3 px-0 mx-0 d-flex flex-column align-items-center my-3">
     <div class="d-flex flex-column align-items-center h-100">
         <img src="./assets/IMG/<?php echo $row['image_product']?>" class="w-75 h-75" alt="">
         <div class="text-center">

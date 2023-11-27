@@ -36,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     session_start();
                     $_SESSION['emaillogin'] = $emailLOGIN;
                     $_SESSION['IDROLE'] = 2;
+                    $_SESSION['ID'] = $userData['IDuser'];
                     header("location: CLIENT.php");
                     exit;
                   }
