@@ -1,6 +1,9 @@
+
 var NAME = document.querySelector('#form1');
 var LASTNAME = document.querySelector('#form2');
 var EMAIL = document.querySelector('#form3');
+var password = document.querySelector('#form4');
+
 
 var NAMEregex = /^[a-zA-Z]{4,}$/;
 var LASTregex = /^[a-zA-Z]{4,}$/;
@@ -34,5 +37,7 @@ EMAIL.addEventListener("input", () => {
 //     event.preventDefault();
 //   })
 // })
+
+
 
 

@@ -14,26 +14,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $email = $_POST["EMAIL"];
   $password = $_POST["PASSWORD"];
 
+  if(strlen($name) <= 5 || strlen($lastname) <=5 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo '<script>alert("Please check your informations.");</script>';
+  }
+  else {
+    $Qcheck = "SELECT EMAILuser FROM users WHERE EMAILuser = '$email'";
+    $QR = mysqli_query($cnc, $Qcheck);
+  
+    if (mysqli_num_rows($QR)==0) {
+      $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+  
+      $QUERY = ("INSERT INTO users (NAMEuser,LASTNAMEuser,EMAILuser,PASSWORDuser) 
+              values ('$name','$lastname','$email','$hashedPassword')");
+      $resultregister = mysqli_query($cnc, $QUERY);
+  
+      if ($resultregister) {
+        session_start();
+        $_SESSION['email_register'] = $email;
+        header("Location: checker.php");
+        exit;
+      } else {
+        echo "ERROR" . $resultregister . "<br>";
+      }
+  }
+  }
 
-  $Qcheck = "SELECT EMAILuser FROM users WHERE EMAILuser = '$email'";
-  $QR = mysqli_query($cnc, $Qcheck);
 
-  if (mysqli_num_rows($QR)==0) {
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-    $QUERY = ("INSERT INTO users (NAMEuser,LASTNAMEuser,EMAILuser,PASSWORDuser) 
-            values ('$name','$lastname','$email','$hashedPassword')");
-    $resultregister = mysqli_query($cnc, $QUERY);
-
-    if ($resultregister) {
-      session_start();
-      $_SESSION['email_register'] = $email;
-      header("Location: checker.php");
-      exit;
-    } else {
-      echo "ERROR" . $resultregister . "<br>";
-    }
-}
+  
  }
 
  
@@ -57,51 +64,68 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-    <section class="d-flex justify-content-center align-items-center">
-      <div class="h-auto col-md-12 mx-0 px-0 inside-section card d-flex flex-row justify-content-between">
+  <div class="container d-flex justify-content-center align-items-center" style="height:100vh">
+        <div class="row col-md-9 border-1 border border-success" style="height:30rem">
+            <div class="LEFT col-md-5 bg-success">
+            <ion-icon class="fs-1" name="leaf-outline"></ion-icon>
+            <h4>Opep your place for brand new PLANTS</h4>
 
-
-        <div class="left col-md-6 py-5 mx-0  text-center">
-          <h1 class="text-center text-success">Sign UP</h2>
-            <form action="" method="POST" class="my-5">
-              <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
-                <ion-icon name="person-circle-outline" class="fs-2 text-success"></ion-icon>
-                <input type="text" required class="form-control w-75" id="form1" placeholder="USERNAME" name="USERNAME">
-              </div>
-              <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
-                <ion-icon name="person-circle-outline" class="fs-2 text-success"></ion-icon>
-                <input type="text" required class="form-control w-75" id="form2" placeholder="LASTNAME" name="LAST">
-              </div>
-              <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
-                <ion-icon name="mail-outline" class="fs-2 text-success"></ion-icon>
-                <input type="email" required class="form-control w-75" id="form3" value="EMAIL" placeholder="EMAIL" name="EMAIL">
-              </div>
-              <div class="mb-3 d-flex align-items-center w-100 justify-content-center gap-2">
-                <ion-icon name="lock-closed-outline" class="fs-2 text-success"></ion-icon>
-                <input type="password" required class="form-control w-75" id="form4" placeholder="PASSWORD" name="PASSWORD">
-              </div>
-              <a href=""><input type="submit" class="btn btn-success" value="REGISTER" name="register"></a>       
-            </form>
-            <a href="LOGIN.php">do you have an Account already?</a>
-            <div class="text-success" >
+            </div>
+            <div class="RIGHT d-flex col-md-7 align-items-center justify-content-center">
+                    
+                    <form action="" method="POST">
+                    <h4 class="fs-1 text-success mb-4">Sign up</h4>
+                        <div class="d-flex">
+                            <div class="w-75 form-outline">
+                            <label class="form-label" for="formControlReadonly">NAME</label>
+                            <input required type="text" class="form-control" placeholder="USERNAME" id="form1" name="USERNAME">
+                            </div>
+                        
+                        <div class="ms-4 w-75">
+                            <label for="" class="form-label">LASTNAME</label>
+                            <input required type="text"  class="form-control" placeholder="LASTNAME" id="form2" name="LAST">
+                        </div>
+                        </div>
+                        <label for="" class="form-label">Email</label>
+                        <input required type="email" class="form-control" placeholder="EMAIL" name="EMAIL" id="form3" class="w-100">
+                        <label for="" class="form-label">password</label>
+                        <input required type="password" class="form-control" placeholder="PASSWORD" id="form4" name="PASSWORD" class="w-100">
+                        <button class="btn btn-success w-100 mt-5">Suivant</button>
+                        <a class="d-flex justify-content-center" href="LOGIN.php">do you have an Account already?</a>
+                        <div class="text-success" >
             <?php
               $Qcheck = "SELECT EMAILuser FROM users WHERE EMAILuser = '$email'";
               $QR = mysqli_query($cnc, $Qcheck);
             if (mysqli_num_rows($QR) > 0) {
-              echo "ACCOUNT ALREADY EXIST";
+              ?>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content bg-success text-light">
+          <div class="modal-body text-center d-flex align-items-center">
+          <ion-icon class="fs-1" name="bug-outline"></ion-icon>
+            <h3>Sorry Sir but account already exist!!</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+              document.addEventListener('DOMContentLoaded', function () {
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            myModal.show();
+        });
+            </script>
+              
+              <?php
             }
             ?>
             </div>
+                    </form>
+                    
+            </div>
         </div>
-
-
-        <div class="right col-md-6 mx-0 px-0">
-          <div class="IMG"></div>
-        </div>
-      </div>
-
-
-    </section>
+    </div>
 
 
 

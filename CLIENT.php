@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once('connectDB.php');
-if($_SESSION){
+if($_SESSION['emaillogin']){
     $email = $_SESSION['emaillogin'];
     $role = $_SESSION['IDROLE'];
     // echo $email;
@@ -12,7 +12,10 @@ if($_SESSION){
     $row = $resultuser->fetch_assoc();
     $iduser = $row['IDuser'];
 }
-
+else {
+    header("location: LOGIN.php");
+    exit();
+}
 
 if(isset($_POST['ADDTOCART'])) {
     $produitcart = $_POST['ADDTOCART'];
@@ -31,6 +34,12 @@ if(isset($_POST['ADDTOCART'])) {
 }
 
 
+if(isset($_POST['LOGOUT'])) {
+    session_unset();
+    session_destroy();
+    header("location: LOGIN.php");
+    exit();
+}
 
 ?>
 
@@ -41,12 +50,13 @@ if(isset($_POST['ADDTOCART'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bootstrap demo</title>
+    <link rel="stylesheet" href="client.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
- 
+
 </head>
   <body>
 
-  <header>
+  <header class="">
    <div class="top">
    <nav class="border-bottom border-2 d-flex justify-content-between px-3 pt-2" >
         <div class="left d-flex text-center">
@@ -58,7 +68,9 @@ if(isset($_POST['ADDTOCART'])) {
         <div class="right d-flex gap-3 text-center">
             <p>ENGLISH</p>
             <p>DH marocain</p>
-            <ion-icon name="person-circle-outline" class="fs-3"></ion-icon>
+            <form action="" method="POST">
+                <button name="LOGOUT" class="btn btn-dark">LOG OUT</button>
+            </form>
         </div>
     </nav>
    </div>
@@ -143,7 +155,7 @@ if(isset($_POST['ADDTOCART'])) {
 </form>
 
 
-<section class="HERO  row col-md-12 px-5" style="margin-top:6rem">
+<section class="HERO row align-items-center justify-content-center gap-3" style="margin-top:6rem">
     <?php
     
     // Check if a search by product name is performed
@@ -156,13 +168,17 @@ if(isset($_POST['ADDTOCART'])) {
         // Display products based on the search result
         while($row = $result->fetch_assoc()) {
             ?>
-            <div class="card col-md-3 px-0 mx-0 d-flex flex-column align-items-center my-3">
-    <div class="d-flex flex-column align-items-center h-100">
-        <img src="./assets/IMG/<?php echo $row['image_product']?>" class="w-75 h-75" alt="">
-        <div class="text-center">
+             <div class="card position-relative col-md-3 px-0 mx-0 d-flex flex-column my-3" style="height: 15rem; overflow: hidden;
+           background-image:url(./assets/IMG/<?php echo $row['image_product']?>);
+           background-position:center;
+           background-size:cover;
+           
+           ">
+    <div class="d-flex flex-column h-100">
+        <div class="inside position-absolute  p-3">
             <h4><?php echo $row['NAMEproduct']?></h4>
             <form action="" method="POST">
-                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" class="btn btn-success">Add to cart</button>
+                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" class="btn btn-dark">Add to cart</button>
             </form>
         </div>
     </div>
@@ -188,17 +204,22 @@ if(isset($_POST['ADDTOCART'])) {
         $result = $prepare->get_result();
         while($row = $result->fetch_assoc()) {
             ?>
-           <div class="card col-md-3 px-0 mx-0 d-flex flex-column align-items-center my-3">
-    <div class="d-flex flex-column align-items-center h-100">
-        <img src="./assets/IMG/<?php echo $row['image_product']?>" class="w-75 h-75" alt="">
-        <div class="text-center">
+           <div class="card position-relative col-md-3 px-0 mx-0 d-flex flex-column my-3" style="height: 15rem; overflow: hidden;
+           background-image:url(./assets/IMG/<?php echo $row['image_product']?>);
+           background-position:center;
+           background-size:cover;
+           
+           ">
+    <div class="d-flex flex-column h-100">
+        <div class="inside position-absolute  p-3">
             <h4><?php echo $row['NAMEproduct']?></h4>
             <form action="" method="POST">
-                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" class="btn btn-success">Add to cart</button>
+                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" class="btn btn-dark">Add to cart</button>
             </form>
         </div>
     </div>
 </div>
+
             <?php
         }
     }
@@ -208,13 +229,17 @@ if(isset($_POST['ADDTOCART'])) {
         $r = $query->get_result();
         while($row = $r->fetch_assoc()) {
             ?>
-             <div class="card col-md-3 px-0 mx-0 d-flex flex-column align-items-center my-3">
-    <div class="d-flex flex-column align-items-center h-100">
-        <img src="./assets/IMG/<?php echo $row['image_product']?>" class="w-75 h-75" alt="">
-        <div class="text-center">
+               <div class="card position-relative col-md-3 px-0 mx-0 d-flex flex-column my-3" style="height: 15rem; overflow: hidden;
+           background-image:url(./assets/IMG/<?php echo $row['image_product']?>);
+           background-position:center;
+           background-size:cover;
+           
+           ">
+    <div class="d-flex flex-column h-100">
+        <div class="inside position-absolute  p-3">
             <h4><?php echo $row['NAMEproduct']?></h4>
             <form action="" method="POST">
-                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" class="btn btn-success">Add to cart</button>
+                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" class="btn btn-dark">Add to cart</button>
             </form>
         </div>
     </div>

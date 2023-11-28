@@ -4,18 +4,25 @@ session_start ();
 if(isset($_SESSION['email_register'])) {
     $email = $_SESSION['email_register'];
     echo $email;
+    $select=$cnc->prepare("SELECT IDuser FROM users WHERE EMAILuser = ?");
+    $select->bind_param("s",$email);
+    $select->execute();
+    $result=$select->get_result();
+    $row = $result->fetch_assoc();
+    $ID = $row['IDuser'];
 }
 
 //1 == ADMIN
 //2 == CLIENT
-if (isset($_POST['1'])) {
-    $pick = 1; 
-} elseif (isset($_POST['2'])) {
-    $pick = 2; 
+if (isset($_POST['Admin'])) {
+    $pick = "ADMIN"; 
+} elseif (isset($_POST['Client'])) {
+    $pick = "CLIENT"; 
 }
 
 if (isset($pick)) {
-    $check = $cnc->prepare("UPDATE users SET IDrole = '$pick' WHERE EMAILuser = '$email'");
+    $check = $cnc->prepare("INSERT INTO roles (NAMErole,user_id) VALUES (?,?)");
+    $check->bind_param("si",$pick,$ID);
     if ($check) {
         $check->execute();
         header("Location: LOGIN.php");
@@ -54,11 +61,11 @@ if (isset($pick)) {
             <div class="row justify-content-center gap-4">
             <div class="col-3 card border-0 d-flex gap-5 align-items-center">
                 <ion-icon name="person-outline" class="text-success" style="font-size:10rem"></ion-icon>
-                <input type="submit" class="btn btn-success" name="1" value="ADMIN">
+                <input type="submit" class="btn btn-success" name="Admin" value="ADMIN">
                 </div>
                 <div class="col-3 card border-0 d-flex gap-5 align-items-center">
                 <ion-icon name="person-outline" class="text-success" style="font-size:10rem"></ion-icon>
-                <input type="submit" class="btn btn-success" name="2" value="CLIENT">
+                <input type="submit" class="btn btn-success" name="Client" value="CLIENT">
                 </div>
             </div>
             </form>

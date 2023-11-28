@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once('connectDB.php');
 
 $emailLOGIN = "";
@@ -9,47 +10,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $emailLOGIN = $_POST["EMAIL"];
     $passwordLOGIN = $_POST["PASSWORD"];
     
-
     $Loginquery = $cnc->prepare("SELECT * FROM users WHERE EMAILuser = ?");
     $Loginquery->bind_param("s", $emailLOGIN);
     $Loginquery->execute();
     $result = $Loginquery->get_result();
-
+    $userData = $result->fetch_assoc();
+    
     if ($result->num_rows === 0) {
-        $errorMsg = "THERE IS NO SUCH ACCOUNT";
+        $errorMsg = "Invalid email or password";
     } else {
-        $userData = $result->fetch_assoc();
-        if ($userData) {
-            $hashedPasswordFromDB = $userData['PASSWORDuser']; 
-            if (password_verify($passwordLOGIN, $hashedPasswordFromDB)) {
-                $errorMsg = "PASSWORD CORRECT";
-                
-                  if ($userData["IDROLE"] == 1) {
-                session_start();
+        $hashedPasswordFromDB = $userData['PASSWORDuser']; 
+        if (password_verify($passwordLOGIN, $hashedPasswordFromDB)) {
+            $roles = $cnc->prepare("SELECT * FROM roles WHERE user_id = ?");
+            $roles->bind_param("i", $userData['IDuser']);
+            $roles->execute();
+            $resultroles = $roles->get_result();
+            $rowroles = $resultroles->fetch_assoc();
+            $R = $rowroles['NAMErole'];
+            echo $R;
+            if ($R =="ADMIN") {
                 $_SESSION['emaillogin'] = $emailLOGIN;
-                $_SESSION['IDROLE'] = 1;
-                    header("location: ADMIN.php");
-                    exit;
-                  }
-                  else
-                  {
-                    session_start();
-                    $_SESSION['emaillogin'] = $emailLOGIN;
-                    $_SESSION['IDROLE'] = 2;
-                    $_SESSION['ID'] = $userData['IDuser'];
-                    header("location: CLIENT.php");
-                    exit;
-                  }
-            } else {
-                // Password is incorrect
-                $errorMsg = "PASSWORD IS INCORRECT";
+                $_SESSION['IDROLE'] = $R;
+                header("location: ADMIN.php");
+                exit;
+            } elseif ($R== 'CLIENT') {
+                $_SESSION['emaillogin'] = $emailLOGIN;
+                $_SESSION['IDROLE'] = $R;
+                $_SESSION['ID'] = $userData['IDuser'];
+                header("location: CLIENT.php");
+                exit;
             }
         } else {
-            $errorMsg = "THERE IS NO SUCH ACCOUNT";
+            $errorMsg = "Invalid email or password";
         }
     }
 }
 ?>
+
 
 
 

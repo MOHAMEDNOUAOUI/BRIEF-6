@@ -1,7 +1,7 @@
 <?php
 include_once('connectDB.php');
 session_start();
-if($_SESSION['IDROLE'] != 1) {
+if($_SESSION['IDROLE'] !== "ADMIN") {
         header("location: LOGIN.php");
 }
 if (isset($_SESSION['emaillogin'])) {
@@ -69,9 +69,13 @@ if(isset($_POST['MODIFYPRODUCT'])) {
 
 if(isset($_POST['DELETECATEGORY'])) {
     $is_delete = $_POST["DELETECATEGORY"];
-
+    
     $delete = $cnc->prepare("DELETE FROM category WHERE IDcategory = ?");
+    $deleteproductcategor = $cnc->prepare("DELETE FROM products WHERE IDcategory = ?");
+    $deleteproductcategor->bind_param("i",$is_delete);
     $delete->bind_param("i",$is_delete);
+    $deleteproductcategor->execute();
+
     $delete->execute();
     $error = "<h4>CATEGORY DELETED SUCCEFULLY</h4>
     <p>please go back to Categories to delete more if you want</p>";
@@ -114,6 +118,13 @@ if(isset($_POST['submitproduct'])) {
     
 }
 
+if(isset($_POST['LOGOUT'])) {
+    session_unset();
+    session_destroy();
+    header("location: LOGIN.php");
+    exit();
+}
+
 ?>
 
 
@@ -130,14 +141,17 @@ if(isset($_POST['submitproduct'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <title>Document</title>
 
-
+    <style>
+        body,html {
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 
 <body style="font-family: 'Rubik';">
 
-
     <div class="HERO d-flex" style="width:100vw;height:100vh">
-        <div class="LEFT  top-0 bottom-0 bg-gradient bg-success w-25 h-100">
+        <div class="LEFT position-fixed z-1  bg-gradient bg-success w-25 h-100">
             <h1 class="ps-2 py-4 text-light text-center border-bottom border-light border-2">DASHBOARD</h1>
             <div class="h-75 w-100">
                 <form action="" method="POST" class="row align-items-center justify-content-evenly h-100">
@@ -173,7 +187,8 @@ if(isset($_POST['submitproduct'])) {
 
 
         <!--MAINN PLACE -->
-        <div class="RIGHT w-75 h-100 position-relative">
+        
+        <div class="RIGHT h-100 w-100 position-relative" style="margin-left:20rem">
 
             <div class="position-absolute d-flex text-center align-items-center flex-column" style="top: 50%;
   left: 50%;
@@ -266,9 +281,9 @@ if(isset($_POST['submitproduct'])) {
 
                         
 
-                        <table class="table table-dark">
+                        <table class="table table-dark" style="width:95%">
                             <h1 class="text-center mt-3">PRODUCTS</h1>
-                        <thead>
+                        <thead class="">
                             <tr>
                             <th scope="col">#</th>
                             <th scope="col">IMAGE</th>
@@ -509,7 +524,7 @@ if(isset($_POST['submitproduct'])) {
                                 </tbody>
                             </table>
                         </div>
-
+                    
 
 
 
@@ -535,6 +550,11 @@ if(isset($_POST['submitproduct'])) {
    $users = $cnc->prepare("SELECT * FROM users");
    $users->execute();
    $usersresult = $users->get_result();
+
+   $roles=$cnc->prepare("SELECT * FROM roles");
+   $roles->execute();
+   $resultrule = $roles->get_result();
+   $RR = $resultrule->fetch_assoc();
    while($rowuser = $usersresult->fetch_assoc()) {
     ?>
      <tr>
@@ -543,7 +563,7 @@ if(isset($_POST['submitproduct'])) {
       <td><?php echo $rowuser ['LASTNAMEuser']?></td>
       <td><?php echo $rowuser ['EMAILuser']?></td>
       <?php
-        if($rowuser['IDROLE'] == 1) {
+        if($RR['NAMErole'] == 'ADMIN') {
             ?>
             <td>ADMIN</td>
             <?php
@@ -579,6 +599,9 @@ if(isset($_POST['submitproduct'])) {
                         <h4><?php echo $row['NAMEuser']. ' ' . $row['LASTNAMEuser']?></h4>
                         <p><?php echo $email?></p>
                         <p>ROLE : ADMIN</p>
+                        <form action="" method="POST">
+                            <button name="LOGOUT" class="btn btn-dark">LogOut</button>
+                        </form>
                         </div>
                         <?php
                     } else if ($key == 'Dashboard') {
@@ -588,11 +611,11 @@ if(isset($_POST['submitproduct'])) {
                         $qr = "SELECT NAMEuser,LASTNAMEuser FROM users WHERE EMAILuser = '$email'";
 
                         //returning CLIENTS
-                        $QC = "SELECT * FROM users WHERE IDrole = 2";
+                        $QC = "SELECT * FROM roles WHERE NAMErole = 'CLIENT'";
                         $RC = mysqli_query($cnc, $QC);
                         $CC = mysqli_num_rows($RC);
                         ///RETURNING AMINDS
-                        $QA = "SELECT * FROM users WHERE IDrole = 1";
+                        $QA = "SELECT * FROM roles WHERE NAMErole = 'ADMIN'";
                         $RA = mysqli_query($cnc, $QA);
                         $CA = mysqli_num_rows($RA);
 
@@ -670,11 +693,11 @@ if(isset($_POST['submitproduct'])) {
                     $qr = "SELECT NAMEuser,LASTNAMEuser FROM users WHERE EMAILuser = '$email'";
 
                     //returning CLIENTS
-                    $QC = "SELECT * FROM users WHERE IDrole = 2";
+                    $QC = "SELECT * FROM roles WHERE NAMErole = 'CLIENT'";
                     $RC = mysqli_query($cnc, $QC);
                     $CC = mysqli_num_rows($RC);
                     ///RETURNING AMINDS
-                    $QA = "SELECT * FROM users WHERE IDrole = 1";
+                    $QA = "SELECT * FROM roles WHERE NAMErole = 'ADMIN'";
                     $RA = mysqli_query($cnc, $QA);
                     $CA = mysqli_num_rows($RA);
 

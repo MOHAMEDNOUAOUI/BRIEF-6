@@ -1,0 +1,16 @@
+body,html {
+    overflow-x: hidden;
+}
+
+.inside {
+    bottom: -3.5rem !important;
+    width: 100%;
+    transition: 300ms ease-in;
+    color: white;
+}
+
+.card:hover .inside {
+    bottom: 0 !important;
+    transition: 300ms ease-in;
+    background-color: rgba(57, 57, 57, 0.509)
+}
