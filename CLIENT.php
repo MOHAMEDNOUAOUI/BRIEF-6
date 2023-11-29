@@ -56,7 +56,8 @@ if(isset($_POST['LOGOUT'])) {
 </head>
   <body>
 
-  <header class="">
+ <div class="HEROTOP">
+ <header class="bg-success text-light">
    <div class="top">
    <nav class="border-bottom border-2 d-flex justify-content-between px-3 pt-2" >
         <div class="left d-flex text-center">
@@ -65,11 +66,11 @@ if(isset($_POST['LOGOUT'])) {
         <ion-icon name="mail-outline" class="fs-3 ms-3 me-2"></ion-icon>
         <p>jnziz@test?COM</p>
         </div>
-        <div class="right d-flex gap-3 text-center">
+        <div class="right d-flex gap-3 align-content-center justify-content-center text-center">
             <p>ENGLISH</p>
             <p>DH marocain</p>
-            <form action="" method="POST">
-                <button name="LOGOUT" class="btn btn-dark">LOG OUT</button>
+            <form action="" method="POST" class="">
+                <button name="LOGOUT" class="btn btn-light text-dark">LOG OUT</button>
             </form>
         </div>
     </nav>
@@ -132,9 +133,14 @@ if(isset($_POST['LOGOUT'])) {
         </div>
     </div>
   </div>
+ </div>
 
 
-<form action="" method="GET">
+
+
+
+<section class="HERO row align-items-center justify-content-center gap-3" style="margin-top:6rem">
+<form action="" class="" style="margin-left:17rem"  method="GET">
     <SELECT name="FILTER">
         <option disabled>CATEGORY</option>
         <option value="ALL" name="ALL">ALL</option>
@@ -153,9 +159,6 @@ if(isset($_POST['LOGOUT'])) {
     </SELECT>
     <button class="btn btn-dark"><ion-icon name="search-outline"></ion-icon></button>
 </form>
-
-
-<section class="HERO row align-items-center justify-content-center gap-3" style="margin-top:6rem">
     <?php
     
     // Check if a search by product name is performed
@@ -239,7 +242,7 @@ if(isset($_POST['LOGOUT'])) {
         <div class="inside position-absolute  p-3">
             <h4><?php echo $row['NAMEproduct']?></h4>
             <form action="" method="POST">
-                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" class="btn btn-dark">Add to cart</button>
+                <button value="<?php echo $row ['IDproduct']?>" name="ADDTOCART" onclick="launch_toast()" class="btn btn-dark">Add to cart</button>
             </form>
         </div>
     </div>
@@ -262,5 +265,6 @@ if(isset($_POST['LOGOUT'])) {
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-  </body>
+
+</body>
 </html>
